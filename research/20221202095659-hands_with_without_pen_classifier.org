@@ -1,0 +1,83 @@
+:PROPERTIES:
+:ID:       55374218-eaf0-48f8-b7ff-3d8d56d07298
+:END:
+#+OPTIONS: broken-links:t
+#+title: hands-with-pen / hands-without-pen classifier
+* Software
+- Name: MMClassification
+- Link: https://mmclassification.readthedocs.io/en/latest/
+** Installation
+I installed the software following mmclassification official
+documentation. Below I only document commands for future reference,
+#+begin_src sh
+
+  # Prerequisites
+  conda create --name mmclass python=3.8 -y
+  conda install pytorch==1.12.1 torchvision==0.13.1 torchaudio==0.12.1 cudatoolkit=11.3 -c pytorch
+
+  # MMCV
+  pip install -U openmim
+  mim install mmcv-full
+
+  # mmcls
+  git clone https://github.com/open-mmlab/mmclassification.git
+  cd mmclassification
+  pip install -v -e .
+#+end_src
+
+** Verifying the installation
+#+begin_src sh
+  # From ~/mmclassification
+  mim download mmcls --config resnet50_8xb32_in1k --dest ~/Downloads
+  python demo/image_demo.py demo/demo.JPEG ~/Downloads/resnet50_8xb32_in1k.py ~/Downloads/resnet50_8xb32_in1k_20210831-ea4938fc.pth --device cuda --show
+#+end_src
+
+* Data preparation
+** 1. Extracting images from video samples
+I first extract images from video samples by running the following
+script
+#+begin_src sh
+  # From HAQ/hands-with-without-pen-classifier
+  python extract_frames.py \
+    /home/vj/twotb/aolme_datasets/wnw_table_roi/hands_with_withot_pen_images/writing_30fps \
+    /home/vj/twotb/aolme_datasets/wnw_table_roi/hands_with_withot_pen_images/nowriting_30fps \
+    /home/vj/twotb/aolme_datasets/wnw_table_roi/hands_with_withot_pen_images
+#+end_src
+** 2. Cleaning data
+After extracting the frames as images we might have some improper instances,
+- Image from writing
+  - Without hands
+  - Without pen
+- Images from nowriting
+  - Without hands
+  - With hands and pen
+This requires manual cleaning* by going through each image.
+#+CAPTION: Images extracted from writing and nowriting video samples that will mislead classifier.
+#+NAME:   fig:writing_data_split_csv
+[[./images/20221202095659-hands_with_without_pen_classifier-not_correct_instances.drawio.svg]]
+
+** 3. Splitting data into training, validation and testing
+To split the data into training, validation and testing we first
+need the following files and directories,
+- Directory having images of hands-with-pen and hands-withot-pen.
+- A csv file having session name and corresponding data split.
+  Here we are assuming that the image files have information about session.
+  For example, =tv_224_793_G-C3L1W-Mar19-D-Phuong_q2_03-04_30fps_Kid77_4381_4471_44.0.png= has
+  session information coded into, /C3L1W-Mar10-D/.
+    
+  #+CAPTION: Data split CSV file for writing
+  #+NAME:   fig:writing_data_split_csv
+  [[./images/20221202095659-hands_with_without_pen_classifier_data_split_csv.svg]]
+
+- Run the following script to distribute images into proper directories
+  as recommended by =mmclassification=.
+
+  #+begin_src sh
+    # From HAQ/hands-with-without-pen-classifier
+    python split_data.py \
+           /home/vj/twotb/aolme_datasets/wnw_table_roi/hands_with_withot_pen_images \
+           /home/vj/Dropbox/writing-nowriting/trn-val-tst-splits.csv
+  #+end_src
+ 
+
+  

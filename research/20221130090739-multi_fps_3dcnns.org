@@ -1,0 +1,20 @@
+:PROPERTIES:
+:ID:       0713387e-d174-41f8-86b4-f7a7fc47e68c
+:END:
+#+title: Writing / nowriting classifier
+#+REVEAL_ROOT: https://cdn.jsdelivr.net/npm/reveal.js
+
+* Two options
+To support multiple frame rates, 10, 20 and 30 FPS, there are two options,
+1. Switch to 2D-CNNs and 2D-MaxPooling when the temporal dimension is < 3.
+2. Adjusting the initial MaxPooling. *(Using this)*
+
+* Adjusting initial MaxPooling
+The first layer max pooling is adjusted as per FPS. The rest of the
+architecture will remain the same.
+
+#+CAPTION: Adjusting the first layer MaxPooling
+#+NAME:   fig:AdjMaxPool
+[[./images/20221130090739-multi_fps_3dcnns.drawio.svg]]
+
+

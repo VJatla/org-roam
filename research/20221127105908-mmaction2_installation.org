@@ -1,0 +1,11 @@
+:PROPERTIES:
+:ID:       4b5aff8d-8407-4c6f-a94c-3aabd8823474
+:TOC:      :include all
+:END:
+#+title: mmaction2 installation
+
+* Information
+- *Date:* Nov 27, 2022
+- *Weblink:* https://github.com/VJatla/mmaction2
+* Installation
+

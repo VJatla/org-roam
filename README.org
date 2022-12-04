@@ -1,0 +1,2 @@
+* org-roam
+The entry point to my notes.
